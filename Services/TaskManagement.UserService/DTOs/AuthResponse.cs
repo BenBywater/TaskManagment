@@ -1,4 +1,4 @@
-namespace TaskManagement.UserSerive.DTOs;
+namespace TaskManagement.UserService.DTOs;
 
 public class AuthResponse
 {

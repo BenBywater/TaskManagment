@@ -1,7 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace TaskManagement.UserSerive.DTOs;
-
+namespace TaskManagement.UserService.DTOs;
 public class RegisterRequest
 {
     
