@@ -4,7 +4,7 @@ using TaskManagement.UserService.Models;
 
 namespace TaskManagement.UserService.Repositories;
 
-public class UserRepository : IUsereRepository
+public class UserRepository : IUserRepository
 {
     private readonly UserManager<User> _userManager;
 

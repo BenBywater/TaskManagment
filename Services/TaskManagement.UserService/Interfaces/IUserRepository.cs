@@ -2,7 +2,7 @@ using TaskManagement.UserService.Models;
 
 namespace TaskManagement.UserService.Interfaces;
 
-public interface IUsereRepository
+public interface IUserRepository
 {
     Task<User?> GetByIdAsync(string id);
     Task<User?> GetByEmailAsync(string email);
