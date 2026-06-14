@@ -5,5 +5,5 @@ namespace TaskManagement.UserService.Interfaces;
 
 public interface ITokenService
 {
-    AuthResponse GenerateToken(User user);
+        Task<AuthResponse> GenerateTokenAsync(User user, IList<string> roles);
 }
