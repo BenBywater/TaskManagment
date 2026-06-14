@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
-using System.IdentityModel.Tokens.Jwt;
 using TaskManagement.UserService.Data;
 using TaskManagement.UserService.Interfaces;
 using TaskManagement.UserService.Models;
@@ -31,7 +30,6 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
 .AddDefaultTokenProviders();
 
 // JWT Authentication
-// Prevent ASP.NET from remapping short JWT claim names (sub, email) to long WS-Federation URIs
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 builder.Services.AddAuthentication(options =>
 {
@@ -41,7 +39,9 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer(options =>
 {
+    // Disable auto mapping of JWT claims into legacy URIs
     options.MapInboundClaims = false;
+
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
@@ -64,7 +64,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    // Add JWT bearer security definition — adds the Authorise button to Swagger UI
+    // Add JWT bearer security definition
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorisation",
@@ -75,7 +75,6 @@ builder.Services.AddSwaggerGen(options =>
         Description = "Paste your JWT token here."
     });
 
-    // Apply the security requirement globally so all endpoints show the lock icon
     options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
     {
         [new OpenApiSecuritySchemeReference("Bearer", document)] = []
