@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using TaskManagement.ProjectService.Data;
+using TaskManagement.ProjectService.Interfaces;
+using TaskManagement.ProjectService.Repositories;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -35,6 +37,9 @@ builder.Services.AddAuthentication(options =>
             Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]!))
     };
 });
+
+// Repositories & Services
+builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 
 // Controllers + Swagger
 builder.Services.AddControllers();
