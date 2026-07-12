@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
+using TaskManagement.TaskService.Clients;
 using TaskManagement.TaskService.Data;
 using TaskManagement.TaskService.Interfaces;
 using TaskManagement.TaskService.Repositories;
@@ -39,6 +40,12 @@ builder.Services.AddAuthentication(options =>
 
 // Repositories
 builder.Services.AddScoped<ITaskRepository, TaskRepository>();
+
+// Notification client
+builder.Services.AddHttpClient<INotificationClient, NotificationClient>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7291");
+});
 
 // Controllers + Swagger
 builder.Services.AddControllers();

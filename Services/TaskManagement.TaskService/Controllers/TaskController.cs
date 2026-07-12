@@ -3,6 +3,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TaskManagement.TaskService.Clients;
 using TaskManagement.TaskService.DTOs;
 using TaskManagement.TaskService.Interfaces;
 using TaskManagement.TaskService.Models;
@@ -15,8 +16,13 @@ namespace TaskManagement.TaskService.Controllers;
 public class TaskController : ControllerBase
 {
     private readonly ITaskRepository _repo;
+    private readonly INotificationClient _notifications;
 
-    public TaskController(ITaskRepository repo) => _repo = repo;
+    public TaskController(ITaskRepository repo, INotificationClient notifications)
+    {
+        _repo = repo;
+        _notifications = notifications;
+    }
 
     private string CurrentUserId =>
         User.FindFirstValue(JwtRegisteredClaimNames.Sub) ?? string.Empty;
@@ -66,6 +72,12 @@ public class TaskController : ControllerBase
         };
 
         await _repo.CreateAsync(task);
+
+        if (!string.IsNullOrEmpty(task.AssigneeId))
+        {
+            await _notifications.NotifyTaskAssignedAsync(ToResponse(task));
+        }
+
         return CreatedAtAction(nameof(GetById), new { id = task.Id }, ToResponse(task));
     }
 
@@ -93,6 +105,12 @@ public class TaskController : ControllerBase
         try
         {
             await _repo.UpdateAsync(task);
+
+            if (!string.IsNullOrEmpty(task.AssigneeId))
+            {
+                await _notifications.NotifyTaskAssignedAsync(ToResponse(task));                
+            }
+
             return Ok(ToResponse(task));
         }
         catch (DbUpdateConcurrencyException)
