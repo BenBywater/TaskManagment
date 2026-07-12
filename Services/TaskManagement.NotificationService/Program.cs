@@ -1,6 +1,12 @@
+using System.Threading.Channels;
 using Microsoft.OpenApi;
+using TaskManagement.NotificationService.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Register the channel as a singleton — both the controller (writer)
+// and the BackgroundService (reader) must share the same instance
+builder.Services.AddSingleton(Channel.CreateUnbounded<NotificationMessage>());
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
