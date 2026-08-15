@@ -25,7 +25,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddAuthorization();
 
 builder.Services.AddReverseProxy()
-    .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
+    .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"))
+    .ConfigureHttpClient((_, handler) =>
+    {
+        // Added dev only bypass. YARP does not trust dev certificares
+        if (builder.Environment.IsDevelopment())
+            handler.SslOptions.RemoteCertificateValidationCallback = (_, _, _, _) => true;
+    });
 
 var app = builder.Build();
 
